@@ -1,44 +1,36 @@
 const express = require('express');
 const mysql = require('mysql2');
-
 const app = express();
 
-// Configuration PORT (OpenShift)
-const PORT = process.env.PORT || 3000;
+// Port par défaut sur OpenShift est souvent 8080
+const port = process.env.PORT || 8080;
 
-// Connexion MySQL
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST || 'mysql',
-  user: process.env.DB_USER || 'user',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_NAME || 'appdb'
-});
+// Configuration de la connexion à la base de données via variables d'environnement
+const dbConfig = {
+    host: process.env.DB_HOST || 'mysql', // 'mysql' correspond au Service Name créé à l'Action 1
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'test'
+};
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Erreur connexion DB:', err);
-  } else {
-    console.log('Connecté à MySQL ');
-  }
-});
-
-// Route principale
 app.get('/', (req, res) => {
-  res.send('Mon application Node.js fonctionne sur OpenShift 🚀');
+    res.send('<h1>Bienvenue sur la VM 2 (Zone DMZ)</h1><p>Serveur Node.js déployé avec succès sur OpenShift !</p>');
 });
 
-// Test DB
-app.get('/db', (req, res) => {
-  connection.query('SELECT 1 + 1 AS result', (err, results) => {
-    if (err) {
-      res.send('Erreur DB');
-    } else {
-      res.send('Résultat DB: ' + results[0].result);
-    }
-  });
+app.get('/test-db', (req, res) => {
+    const connection = mysql.createConnection(dbConfig);
+    
+    connection.connect((err) => {
+        if (err) {
+            console.error('Erreur de connexion à la DB:', err);
+            res.status(500).send('Erreur de connexion à la base de données (Le LAN est injoignable).');
+            return;
+        }
+        res.send('<h3>Succès !</h3><p>Le serveur Web (DMZ) a réussi à se connecter à MySQL (LAN) !</p>');
+        connection.end();
+    });
 });
 
-// Lancement serveur
-app.listen(PORT, () => {
-  console.log(`App started on PORT ${PORT}`);
+app.listen(port, () => {
+    console.log(`Serveur en écoute sur le port ${port}`);
 });
