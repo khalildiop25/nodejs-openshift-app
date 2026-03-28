@@ -8,9 +8,9 @@ const port = process.env.PORT || 8080;
 // Configuration de la connexion à la base de données via variables d'environnement
 const dbConfig = {
     host: process.env.DB_HOST || 'mysql', // 'mysql' correspond au Service Name créé à l'Action 1
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'test'
+    user: process.env.DB_USER || 'admin_user',
+    password: process.env.DB_PASSWORD || 'Pass_1234',
+    database: process.env.DB_NAME || 'Projet_db'
 };
 
 app.get('/', (req, res) => {
