@@ -6,10 +6,10 @@ const port = 3000;
 
 // Connexion à MySQL via variables d'environnement
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST || 'mysql', // nom du service MySQL dans OpenShift
-  user: process.env.DB_USER || 'appuser',
-  password: process.env.DB_PASSWORD || 'AppPass123',
-  database: process.env.DB_NAME || 'appdb'
+   host: '10.0.2.2',     
+  user: 'nodeuser',
+  password: '1230',
+  database: 'studentdb'
 });
 
 connection.connect(err => {
